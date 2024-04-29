@@ -1,0 +1,37 @@
+id: cgi-test-page
+
+info:
+  name: CGI Test page
+  author: Bright
+  severity: info
+  tags: cgi,misconfig
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/cgi-bin/test/test.cgi"
+      - "{{BaseURL}}/cgi-bin/test/test.pl"
+      - "{{BaseURL}}/cgi-bin/test/test.py"
+      - "{{BaseURL}}/cgi-bin/test/test.php"
+      - "{{BaseURL}}/cgi-bin/test/test.asp"
+      - "{{BaseURL}}/cgi-bin/test.cgi"
+      - "{{BaseURL}}/cgi-bin/test.pl"
+      - "{{BaseURL}}/cgi-bin/test.py"
+      - "{{BaseURL}}/cgi-bin/test.php"
+      - "{{BaseURL}}/cgi-bin/test.asp"
+
+    stop-at-first-match: true
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - HTTP_ACCEPT
+          - HTTP_ACCEPT_ENCODING
+          - cgi-bin
+        condition: and
+
+      - type: status
+        status:
+          - 200
+
+# digest: 4a0a004730450220189fb258bdf1605fb7abb62829e81c782e42ccfc3fb36ba2d6bbd92191b788a8022100c30555cc20ad6523509db9d661aa69dd1ba697084092c0156137fe5d63b2d5a0:922c64590222798bb761d5b6d8e72950

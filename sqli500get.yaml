@@ -1,0 +1,31 @@
+id: error-based-sqli
+info:
+  name: Error-Based Blind SQL Injection
+  author: Bright
+  severity: Critical
+  description: Detects error-based blind SQL injection vulnerability
+http:
+  - method: GET
+    path:
+        - "{{BaseURL}}" 
+    payloads:
+      injection:
+      - "%27"
+      - "'"
+      - "\'"
+
+    fuzzing:
+      - part: query
+        type: postfix
+        mode: single
+        fuzz:
+            - "{{injection}}"
+    stop-at-first-match: true
+
+    matchers:
+      - type: status
+        status:
+          - 500
+
+
+# digest: 4a0a0047304502202747aa1e6dea39e23e6100799bf4245c850a07895e151d189123dc27803dc2e5022100c8ebed9058d9d8dc5f249a93d40c1391ef22f5218d67cfa621679988285968dd:922c64590222798bb761d5b6d8e72950
