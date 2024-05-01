@@ -1,0 +1,25 @@
+id: lfi-vulns
+info:
+  name: local file inclusion
+  author: Bright
+  severity: Critical
+  description: Detects time-based blind SQL injection vulnerability
+http:
+  - method: GET
+    path:
+        - "{{BaseURL}}" 
+    payloads:
+      injection:
+      - "//////etc/passwd"
+    fuzzing:
+      - part: query
+        type: replace
+        mode: single
+        fuzz:
+            - "{{injection}}"
+    stop-at-first-match: true
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+        part: body

